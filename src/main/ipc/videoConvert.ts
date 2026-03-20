@@ -52,6 +52,89 @@ function getVideoDuration(inputPath: string): Promise<number> {
   })
 }
 
+type FormatConfig = {
+  buildArgs: (opts: ConversionOptionsType) => string[]
+}
+
+export const formatStrategies: Record<string, FormatConfig> = {
+  mp4: {
+    buildArgs: (opts) => {
+      const args = ['-c:v', 'libx264', '-crf', '23', '-preset', 'medium']
+
+      if (opts.includeAudio) {
+        args.push('-c:a', 'aac', '-b:a', '128k')
+      } else {
+        args.push('-an')
+      }
+
+      return args
+    }
+  },
+
+  webm: {
+    buildArgs: (opts) => {
+      const args = ['-c:v', 'libvpx-vp9', '-crf', '30', '-b:v', '0']
+
+      if (opts.includeAudio) {
+        args.push('-c:a', 'libopus', '-b:a', '128k')
+      } else {
+        args.push('-an')
+      }
+
+      return args
+    }
+  },
+
+  mov: {
+    buildArgs: (opts) => {
+      const args = ['-c:v', 'prores_ks', '-profile:v', '3']
+
+      if (opts.includeAudio) {
+        args.push('-c:a', 'pcm_s16le')
+      } else {
+        args.push('-an')
+      }
+
+      return args
+    }
+  },
+
+  avi: {
+    buildArgs: (opts) => {
+      const args = ['-c:v', 'mpeg4']
+
+      if (opts.includeAudio) {
+        args.push('-c:a', 'mp3')
+      } else {
+        args.push('-an')
+      }
+
+      return args
+    }
+  },
+
+  gif: {
+    buildArgs: () => {
+      return [
+        '-vf',
+        'fps=10,scale=320:-1:flags=lanczos',
+        '-loop',
+        '0'
+      ]
+    }
+  },
+
+  wav: {
+    buildArgs: () => {
+      return [
+        '-vn',
+        '-c:a',
+        'pcm_s16le'
+      ]
+    }
+  },
+}
+
 let currentProcess: ReturnType<typeof spawn> | null = null
 
 export function registerConvertHandlers() {
@@ -68,24 +151,13 @@ export function registerConvertHandlers() {
 
     const args: string[] = ['-y', '-i', inputPath]
 
-    if (opts.target === 'mp4') {
-      args.push('-c:v', 'libx264', '-crf', '23', '-preset', 'medium')
+    const strategy = formatStrategies[opts.target]
 
-      if (opts.includeAudio) {
-        args.push('-c:a', 'aac', '-b:a', '128k')
-      } else {
-        args.push('-an')
-      }
-
-    } else {
-      args.push('-c:v', 'libvpx-vp9', '-crf', '30', '-b:v', '0')
-
-      if (opts.includeAudio) {
-        args.push('-c:a', 'libopus', '-b:a', '128k')
-      } else {
-        args.push('-an')
-      }
+    if (!strategy) {
+      throw new Error(`unsupported format: ${opts.target}`)
     }
+
+    args.push(...strategy.buildArgs(opts))
 
     args.push(opts.outputPath)
 

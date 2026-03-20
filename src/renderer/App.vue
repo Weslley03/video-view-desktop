@@ -8,7 +8,7 @@
           <VideoLoaded v-if="videoSrc" :video-src="videoSrc" @choose-file="chooseFile" @loadedMetadata="onLoadedMetadata"/>
           <EmptyState v-if="!videoSrc" @choose-file="chooseFile"/>
         </template>
-        <Converting v-else @cancel="cancel"/>
+        <Converting v-else :format="format" @cancel="cancel"/>
       </section>
 
       <aside class="sidebar">
@@ -76,6 +76,10 @@ const format = ref<string>('webm')
 const formatToOptions: SelectOption[] = [
   { label: 'best compatibility (mp4)', value: 'mp4' },
   { label: 'smaller file (webm)', value: 'webm' },
+  { label: 'high quality editing (mov)', value: 'mov' },
+  { label: 'legacy support (avi)', value: 'avi' },
+  { label: 'animated gif (gif)', value: 'gif' },
+  { label: 'lossless audio (wav)', value: 'wav' },
 ]
 
 const chooseFile = async () => {

@@ -4,7 +4,7 @@
       <div class="round-bottom">
         <FileVideo :color="theme.theme.colors.primary100" :size="42"/>
       </div>
-      <span class="title"> Converting to WebM </span>
+      <span class="title"> Converting to {{ formatLabels[props.format] || props.format }} </span>
       <span class="desc"> This may take a few moments... </span>
     </div>
 
@@ -46,6 +46,21 @@ const { progress, elapsed, duration } = useConversion()
 const emit = defineEmits<{
   (e: 'cancel'): void
 }>()
+
+const props = defineProps<{
+  format: string
+}>()
+
+const formatLabels: Record<string, string> = {
+  mp4: 'MP4',
+  webm: 'WebM',
+  mov: 'MOV',
+  avi: 'AVI',
+  gif: 'GIF',
+  mp3: 'MP3 (Audio)',
+  wav: 'WAV (Lossless Audio)',
+  hls: 'HLS Streaming'
+}
 </script>
 
 <style scoped>
