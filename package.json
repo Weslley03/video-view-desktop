@@ -1,0 +1,75 @@
+{
+  "name": "mp4-webm-electron-app",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "simple electron + vue + typeScript video viewer and converter (mp4 <-> webm)",
+  "author": {
+    "name": "weslley",
+    "email": "fakewesleymoraeswv03@hotmail.com"
+  },
+  "homepage": "https://github.com/weslley03/video-view",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "dev": "npm run build:dev && concurrently \"npm:dev:electron\" \"npm:dev:vite\"",
+    "build:dev": "npm run dev:ts && npm run dev:preload",
+    "dev:vite": "vite",
+    "dev:ts": "tsc -p tsconfig.main.json",
+    "dev:electron": "wait-on http://localhost:5173 && cross-env DEV=1 electron .",
+    "dev:preload": "tsc -p tsconfig.preload.json",
+    "build:preload": "tsc -p tsconfig.preload.json",
+    "build:renderer": "vite build",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build": "npm run build:renderer && npm run build:main && npm run build:preload",
+    "start": "electron .",
+    "dist": "npm run build && electron-builder"
+  },
+  "build": {
+    "appId": "com.weslley.videoconverter",
+    "productName": "Video Converter",
+    "icon": "build/icon.png",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "**/node_modules/ffmpeg-static/**",
+      "**/node_modules/ffprobe-static/**"
+    ],
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Utility",
+      "maintainer": "weslley <fakewesleymoraeswv03@hotmail.com>"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  },
+  "dependencies": {
+    "electron-store": "^11.0.2",
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0",
+    "lucide-vue-next": "^0.577.0",
+    "video.js": "7.21.7",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/ffprobe-static": "^2.0.3",
+    "@types/node": "^20.19.37",
+    "@types/video.js": "7.3.58",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "concurrently": "^9.0.0",
+    "cross-env": "^7.0.3",
+    "electron": "^30.0.0",
+    "electron-builder": "^26.8.1",
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0",
+    "wait-on": "^7.0.1"
+  }
+}
