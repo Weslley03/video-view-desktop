@@ -7,7 +7,7 @@
     "name": "weslley",
     "email": "fakewesleymoraeswv03@hotmail.com"
   },
-  "homepage": "https://github.com/weslley03/video-view",
+  "homepage": "https://github.com/weslley03/video-view-desktop",
   "main": "dist/main/main.js",
   "scripts": {
     "dev": "npm run build:dev && concurrently \"npm:dev:electron\" \"npm:dev:vite\"",
@@ -26,6 +26,11 @@
   "build": {
     "appId": "com.weslley.videoconverter",
     "productName": "Video Converter",
+    "publish": {
+      "provider": "github",
+      "owner": "Weslley03",
+      "repo": "video-view-desktop"
+    },
     "icon": "build/icon.png",
     "directories": {
       "output": "release"
